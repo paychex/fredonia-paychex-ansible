@@ -1,7 +1,7 @@
 ---
 - name: Hello World
-- host: p-apacheserver.eastus.cloudapp.azure.com
+- host: Apache_Server
 
   tasks:
   - name: Hello world!
-    shell: echo "Hi, the test succeeded"
+    shell: echo "Hi, the test succeeded!"
