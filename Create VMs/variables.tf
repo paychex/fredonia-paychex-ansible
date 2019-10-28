@@ -8,7 +8,8 @@ variable "resource_group" {
 
 # Number of VMs to create
 variable "vm_count" {
-    description = "Enter the number of Virtual Machines to be created."
+    description = "Number of Virtual Machines to be created."
+    default     = 4
 }
 
 
@@ -106,7 +107,6 @@ variable "admin_username" {
 
 variable "admin_password" {
     description = "Administrator password."
-    default     = "Test@1234"
 }
 
 

@@ -1,17 +1,4 @@
 
-#The following Terraform code will create Virtual Machines in Microsoft Azure cloud.
-
-# main.tf contains the resource instanciation code for the Azure provider. 
-    # To check validity of this code with your subscription, run 'terraform plan' in a terminal  within the same folder
-    # To run the following code and create VMs, run 'terraform apply' in a terminal within the same folder
-
-# Other files/dependencies:
-#   - variable.tf   :   contains variable dependencies for below code
-#   - provider.tf   :   contains credential information for Azure account
-
-
-# Creating a resource group
-
 resource "azurerm_resource_group" "res_group" {
     name                    = "${var.resource_group}"
     location                = "${var.location}"
@@ -25,30 +12,35 @@ resource "azurerm_storage_account" "stor" {
     resource_group_name     = "${azurerm_resource_group.res_group.name}"
     account_tier            = "${var.storage_account_tier}"
     account_replication_type= "${var.storage_replication_type}"
+    count                   = "${var.vm_count}"
 }
 
 # Network/IP
 
 resource "azurerm_public_ip" "vmip" {
-    name                    = "${var.rg_prefix}ip"
+    name                    = "${var.rg_prefix}ip-${count.index}"
     location                = "${var.location}"
     resource_group_name     = "${azurerm_resource_group.res_group.name}"
     allocation_method       = "Dynamic"
-    domain_name_label       = "${var.lb_ip_dns_name}"
+    domain_name_label       = "${var.lb_ip_dns_name}${count.index}"
+    count                   = "${var.vm_count}"
 }
 
 resource "azurerm_virtual_network" "vnet" {
-    name                    = "${var.virtual_network_name}"
+    name                    = "${var.virtual_network_name}-${count.index}"
     location                = "${var.location}"
     address_space           = ["${var.address_space}"]
     resource_group_name     = "${azurerm_resource_group.res_group.name}"
+    count                   = "${var.vm_count}"
 }
 
 resource "azurerm_subnet" "subnet" {
-    name                    = "${var.rg_prefix}subnet"
-    virtual_network_name    = "${azurerm_virtual_network.vnet.name}"
+    name                    = "${var.rg_prefix}subnet${count.index}"
+    virtual_network_name    = "${element(azurerm_virtual_network.vnet.*.name, count.index)}"
     resource_group_name     = "${azurerm_resource_group.res_group.name}"
     address_prefix          = "${var.subnet_prefix}"
+    count                   = "${var.vm_count}"
+
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -60,9 +52,9 @@ resource "azurerm_network_interface" "nic" {
 
     ip_configuration {
         name                = "ipconfig"
-        subnet_id           = "${azurerm_subnet.subnet.id}"
+        subnet_id           = "${element(azurerm_subnet.subnet.*.id, count.index)}"
         private_ip_address_allocation = "Dynamic"
-        public_ip_address_id = "${azurerm_public_ip.vmip.id}"
+        public_ip_address_id = "${element(azurerm_public_ip.vmip.*.id, count.index)}"
     }
 }
 
@@ -88,6 +80,7 @@ resource "azurerm_virtual_machine" "vm" {
     name                    = "vm${count.index}"
     location                = "${var.location}"
     resource_group_name     = "${azurerm_resource_group.res_group.name}"
+    #availability_set_id     = "${azurerm_availability_set.availset.id}"
     vm_size                 = "${var.vm_size}"
     network_interface_ids   = ["${element(azurerm_network_interface.nic.*.id, count.index)}"]
     count                   = "${var.vm_count}"

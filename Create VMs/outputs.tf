@@ -5,5 +5,5 @@ output "hostname" {
 }
 
 output "vm_fqdn" {
-  value = "${azurerm_public_ip.vmip.fqdn}"
+  value = "${var.dns_name}"
 }
