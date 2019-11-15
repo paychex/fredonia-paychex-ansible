@@ -1,0 +1,2 @@
+ansible_windows_compat
+ansible_windows_compat.pth

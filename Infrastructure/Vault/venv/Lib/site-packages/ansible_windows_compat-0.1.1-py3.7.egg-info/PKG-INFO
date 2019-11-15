@@ -1,0 +1,34 @@
+Metadata-Version: 1.1
+Name: ansible-windows-compat
+Version: 0.1.1
+Summary: Compatibility library to run Ansible Python modules on a Windows target.
+Home-page: https://github.com/cchurch/ansible-windows-compat
+Author: Chris Church
+Author-email: chris@ninemoreminutes.com
+License: BSD
+Description: |PyPI Version| |Python Versions|
+        
+        Ansible Windows Compat
+        ======================
+        
+        Initial work on a compatibility library to allow Ansible modules written in
+        Python to run on a Windows target.  Only planned to support Ansible v2, and so
+        far only ping works.
+        
+        
+        .. |PyPI Version| image:: https://img.shields.io/pypi/v/ansible-windows-compat.svg
+           :target: https://pypi.python.org/pypi/ansible-windows-compat
+        .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/ansible-windows-compat.svg
+           :target: https://pypi.python.org/pypi/ansible-windows-compat
+        
+Keywords: python ansible windows
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Win32 (MS Windows)
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Software Development :: Libraries
