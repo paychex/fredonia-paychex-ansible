@@ -4,13 +4,13 @@
 #imports
 import sys
 import subprocess
-import os
+import os, stat
 
 #Check to see if program is running as sudo
 #This is a must otherwise, program can't install anything
 user = os.getenv("SUDO_USER")
 if user is None:
-    print "This program need 'sudo' permissions!"
+    print ("This program need 'sudo' permissions!")
     exit()
 
 #Check to see if requests is installed
@@ -31,7 +31,31 @@ except ImportError: #If not found, then download
     subprocess.call([sys.executable, "-m", "pip", "install", 'ZipFile'])
 finally: #then import
     from zipfile import ZipFile
-        
+    
+
+
+#Import shutil
+try:
+    import shutil
+except ImportError: #If not found, then download
+    subprocess.call([sys.executable, "-m", "pip", "install", 'shutil'])
+finally: #then import
+    import shutil
+    
+
+#This function will make a new service file that will start minecraft at boot of server
+def makeServiceFile():
+    f = open("minecraftStartup.service","w+")
+    
+    f.write("[Unit]")
+    f.write("\nDescription=\"Run minecraft\"")
+    f.write("\n[Service]")
+    f.write("\nExecStart=LD_LIBRARY_PATH=$USER/bedrock_server")
+    f.write("\n[Intstall]")
+    f.write("\nWantedBy=multi.user.target")
+    f.close()
+#END OF FUNCTION
+    
     
     
 #MARK: Download scripts and zips
@@ -39,24 +63,10 @@ finally: #then import
 
 print('Downloading BedRock zip')
 
-url = 'https://github.com/paychex/fredonia-paychex-ansible/blob/Minecraft_setup/Infrastructure/ServerDeployment/bedrock_server.zip?raw=true'
+url = 'https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.2.0.zip'
 r = requests.get(url)
 
-with open('./test/bedrock_server.zip', 'wb') as f:
-    f.write(r.content)
-
-# Retrieve HTTP meta-data
-#MARK: TODO: if check to see if download successful
-print(r.status_code)
-print(r.headers['content-type'])
-print(r.encoding)
-
-
-#Download EasyMessages plugin
-print('Downloading EasyMessages plugin for minecraft')
-url = 'https://github.com/paychex/fredonia-paychex-ansible/blob/Minecraft_setup/Infrastructure/ServerDeployment/EasyMessages_v1.2.0.phar?raw=true'
-r = requests.get(url)
-with open('./test/EasyMessages_v1.2.0.phar', 'wb') as f:
+with open('./bedrock-server-1.13.2.0.zip', 'wb') as f:
     f.write(r.content)
 
 # Retrieve HTTP meta-data
@@ -67,11 +77,25 @@ print(r.encoding)
 
 
 #MARK: Unzip bedrock server files
-print('Unzipping bedrock_server.zip')
+print('Unzipping bedrock-server-1.13.2.0.zip')
 # Create a ZipFile Object and load bedrock_server.zip in it
-with ZipFile('./test/bedrock_server.zip', 'r') as zo:
+with ZipFile('./bedrock-server-1.13.2.0.zip', 'r') as zo:
     # Extract all the contents of zip file in current directory
-    zo.extractall('./test')
+    zo.extractall('./')
 
 
+#MARK: This install the service
+#This handles moving the startup service from the install dir to the system services
+sourceDIR = './minecraftStartup.service'
+systemdDIR = '/lib/systemd/system/minecraftStartup.service'
+
+#Create the service file
+makeServiceFile()
+
+#CHMOD service
+os.chmod(sourceDIR, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO) #Read, write, and execute by user.
+
+print("Moving service")
+#move the service
+dest = shutil.move(sourceDIR, systemdDIR)
 
