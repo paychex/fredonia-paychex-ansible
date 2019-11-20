@@ -1,0 +1,23 @@
+- name: Install prerequisites
+  package:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items: "{{ vault_install_prerequisites }}"
+  become: yes
+  - name: Download binary
+  get_url:
+    url: https://releases.hashicorp.com/vault/{{vault_version}}/vault_{{vault_version}}_linux_amd64.zip
+    dest: /tmp/vault_{{vault_version}}_linux_amd64.zip
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
+    checksum: "{{vault_checksum}}"
+  register: vault_download
+  - name: "Unzip vault archive"
+  unarchive:
+    src: "{{ vault_download.dest }}"
+    dest: /usr/local/bin
+    copy: no
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
