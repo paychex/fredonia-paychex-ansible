@@ -1,0 +1,7 @@
+- hosts: myserver
+  tasks:
+     - name: shut down the server
+       command: poweroff
+       become: true
+       async: 30
+       poll: 0
