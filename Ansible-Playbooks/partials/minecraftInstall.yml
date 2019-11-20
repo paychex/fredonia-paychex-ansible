@@ -1,5 +1,5 @@
 ---
-  - host: vm3
+  - hosts: vm3
     become: yes
     become_user: root
     tasks:
