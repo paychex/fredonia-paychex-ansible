@@ -1,12 +1,19 @@
 # By Greg Cavaretta
-# Server setup script - v1.0
+# Server setup script - v1.1
 
 #imports
 import sys
 import subprocess
 import os, stat
+from os import path
 
-#Check to see if program is running as sudo
+#check if minecraft is already installed then don't do anything else
+if path.exists("server.properties"):
+    print("The minecraft file already exists")
+    exit(0)
+
+
+#Check to see if program is running as sudo 
 #This is a must otherwise, program can't install anything
 user = os.getenv("SUDO_USER")
 if user is None:
@@ -22,7 +29,6 @@ except ImportError: #If not found, then download
 finally: #then import
     import requests
     
-
 #Reason for this is because the function is Async and "Safer" than using gzip/tar etc...
 #Import ZipFile
 try:
