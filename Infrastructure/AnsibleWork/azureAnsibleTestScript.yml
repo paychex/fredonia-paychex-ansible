@@ -1,0 +1,71 @@
+---
+
+
+- hosts: localhost
+
+
+  vars:
+    resource_group: __resourceGroupName__
+    location: __location__
+    webapp_name: __webappName__
+    mysqlserver_name: __mysqlServerName__
+    mysqldb_name: __mysqlDbName__
+    admin_username: __mysqlAdmin__
+    admin_password: __mysqlAdminSecret__
+
+
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create App Service on Linux with Java Runtime
+      azure_rm_webapp:
+        resource_group: "{{ resource_group }}"
+        name: "{{ webapp_name }}"
+        plan:
+          resource_group: "{{ resource_group }}"
+          name: myappplan
+          is_linux: false
+          sku: S1
+          number_of_workers: 1
+        frameworks:
+          - name: "java"
+            version: "1.8"
+            settings:
+              java_container: tomcat
+              java_container_version: "9.0"
+
+    - name: Create MySQL Server
+      azure_rm_mysqlserver:
+        resource_group: "{{ resource_group }}"
+        name: "{{ mysqlserver_name }}"
+        sku:
+          name: B_Gen5_1
+          tier: Basic
+        location: "{{ location }}"
+        version: "5.7"
+        enforce_ssl: True
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        storage_mb: 51200
+    - name: Open firewall to access MySQL Server from outside
+      azure_rm_resource:
+        api_version: '2017-12-01'
+        resource_group: "{{ resource_group }}"
+        provider: dbformysql
+        resource_type: servers
+        resource_name: "{{ mysqlserver_name }}"
+        subresource:
+          - type: firewallrules
+            name: externalaccess
+        body:
+          properties:
+            startIpAddress: "0.0.0.0"
+            endIpAddress: "255.255.255.255"
+    - name: Create instance of MySQL Database
+      azure_rm_mysqldatabase:
+        resource_group: "{{ resource_group }}"
+        server_name: "{{ mysqlserver_name }}"
+        name: "{{ mysqldb_name }}"
