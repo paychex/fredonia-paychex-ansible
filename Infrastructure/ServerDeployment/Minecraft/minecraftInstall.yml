@@ -1,0 +1,15 @@
+---
+  - host: vm3
+    become: yes
+    become_user: root
+    tasks:
+      - name: Checking if I can connect to the server.
+        ping:
+      - name: "Adding Minecraft download file to VM3"
+        copy: src="download.py" dest="/home/vm3"
+      - name: Install minecraft server
+        script: "download.py"
+        args:
+          executable: python3
+      - name: Start minecraft server
+        shell: LD_LIBRARY_PATH=. ./bedrock_server
