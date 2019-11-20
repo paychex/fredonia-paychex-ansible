@@ -1,0 +1,13 @@
+---
+  - host: vm3
+    become: yes
+    become_user: root
+    tasks:
+      - name: Checking if I can connect to the server.
+        ping:
+      - name: "Removeing Minecraft files from VM3"
+        copy: src="remove.py" dest="/home/vm3"
+      - name: Remove files from 
+        script: "download.py"
+        args:
+          executable: python3
