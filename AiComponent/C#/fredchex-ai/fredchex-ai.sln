@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fredchex-ai", "fredchex-ai.csproj", "{434673DB-8583-4C2C-887C-ED81C6764CC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{434673DB-8583-4C2C-887C-ED81C6764CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{434673DB-8583-4C2C-887C-ED81C6764CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{434673DB-8583-4C2C-887C-ED81C6764CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{434673DB-8583-4C2C-887C-ED81C6764CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF74D516-136B-4633-B017-5B1D3FAB2E15}
+	EndGlobalSection
+EndGlobal
