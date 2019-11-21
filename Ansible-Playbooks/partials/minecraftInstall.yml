@@ -14,11 +14,11 @@
         file:
           path: /home/vm3/Minecraft
           state: touch
-          when: stat_result.stat.exists == False 
+          when: minecraft.stat.exists == False 
 
       - name: Adding Minecraft download file to VM3
         copy: src="download.py" dest="/home/vm3/Minecraft"
-        when: stat_result.stat.exists == False 
+        when: minecraft.stat.exists == False 
 
       - name: Install minecraft server
         script: "download.py"
