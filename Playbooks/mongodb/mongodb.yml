@@ -1,0 +1,32 @@
+---
+- hosts: vm2
+  become: yes
+  become_user: root
+  vars:
+    mongoDB_Port: 4230
+
+  tasks:
+    - name: Checking if I can connect to the server.
+      ping:
+    - name: Adding MongoDB repository for CentOS
+      yum_repository:
+        name: MongoDB Repository
+        description: A repository to install MongoDB
+        baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+        gpgcheck: yes
+        enabled: yes
+    - name: Installing MongoDB
+      yum: 
+        name: mongodb-org
+        state: latest
+      notify:
+        - start MongoDB
+
+  handlers:
+    - name: start MongoDB
+      service:
+        name: mongod
+        state: started
+          
+          
+        

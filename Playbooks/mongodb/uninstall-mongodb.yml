@@ -1,0 +1,28 @@
+---
+- hosts: vm2
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Checking if I can connect to the server.
+      ping:
+    - name: Stopping MongoDB service
+      service:
+        name: mongod
+        state: stopped
+    - name: Removing MongoDB packages
+      yum:
+        name: mongodb-org
+        state: absent
+      notify:
+        - mongodb removed
+  
+  handlers:
+    - name: mongodb removed
+      ping:
+      
+
+    
+
+
+#jenkins test4
