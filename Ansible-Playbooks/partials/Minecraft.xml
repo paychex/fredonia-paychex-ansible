@@ -1,0 +1,10 @@
+<!-- Written by Greg Cavretta -->
+<!-- v1.0 -->
+<!-- 11.15.19 -->
+---
+- hosts: webservers
+  remote_user: root
+  tasks:
+    - name: test connection
+      ping:
+      remote_user: yourname

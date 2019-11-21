@@ -1,0 +1,28 @@
+---
+  - hosts: vm3
+    become: yes
+    become_user: root
+    tasks:
+      - name: Checking if I can connect to the server.
+        ping:
+      - name: Check if the minecraft download script exists
+          stat:
+            path: /home/vm3/Minecraft/download.py
+          register: minecraft
+
+      - name: Create the file, if it doesnt exist already
+        file:
+          path: /home/vm3/Minecraft
+          state: touch
+          when: stat_result.stat.exists == False 
+
+      - name: Adding Minecraft download file to VM3
+        copy: src="download.py" dest="/home/vm3/Minecraft"
+        when: stat_result.stat.exists == False 
+
+      - name: Install minecraft server
+        script: "download.py"
+        args:
+          executable: python3
+      - name: Start minecraft server
+        shell: LD_LIBRARY_PATH=. ./bedrock_server
