@@ -2,6 +2,9 @@
 - hosts: MongoDB-vm
   become: yes
   become_user: root
+  default:
+    vars:
+      host_key_checking: false
   tasks:
     - name: Checking if I can connect to the server.
       ping:
