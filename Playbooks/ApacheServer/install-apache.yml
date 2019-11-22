@@ -1,6 +1,6 @@
 ---
 - name: Install Apache
-  hosts: vm0
+  hosts: Apache-vm
   become: yes
   tasks:
   - name: Installing the latest version of Apache

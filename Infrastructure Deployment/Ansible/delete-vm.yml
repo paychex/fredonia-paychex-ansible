@@ -14,9 +14,24 @@
   vars:
     resource_group: "Paychex"
   tasks:
-  - name: Remove a VM and all resources that were autocreated
+  - name: Deleting the network interface
+    azure_rm_networkinterface:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-nic"
+      state: absent
+  - name: Deleting the security group
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      state: absent
+  - name: Deleting the virtual network
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-vnet"
+      state: absent
+  - name: Deleting the VM
     azure_rm_virtualmachine:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-vm"
-      remove_on_absent: all_autocreated
+      #remove_on_absent: [network_interfaces, virtual_storage, security_groups]
       state: absent

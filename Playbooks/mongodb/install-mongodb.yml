@@ -1,10 +1,7 @@
 ---
-- hosts: vm2
+- hosts: MongoDB-vm
   become: yes
   become_user: root
-  vars:
-    mongoDB_Port: 4230
-
   tasks:
     - name: Checking if I can connect to the server.
       ping:
