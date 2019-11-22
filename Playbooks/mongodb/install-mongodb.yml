@@ -6,7 +6,7 @@
     - name: Checking if I can connect to the server.
       ping:
     - name: Copying MongoDB repository to the server
-      copy: src=mongodb-org-4.0.repo dest=/etc/yum.repos.d/mongodb-org-4.6.repo
+      copy: src=mongodb-org-4.0.repo dest=/etc/yum.repos.d/mongodb-org-4.0.repo
     - name: Installing MongoDB
       yum: 
         name: mongodb-org
