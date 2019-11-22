@@ -1,28 +1,41 @@
 ---
-  - hosts: vm3
-    become: yes
-    become_user: root
-    tasks:
-      - name: Checking if I can connect to the server.
-        ping:
-      - name: Check if the minecraft download script exists
-          stat:
-            path: /home/vm3/Minecraft/download.py
-          register: minecraft
-
-      - name: Create the file, if it doesnt exist already
-        file:
-          path: /home/vm3/Minecraft
-          state: touch
-          when: minecraft.stat.exists == False 
-
-      - name: Adding Minecraft download file to VM3
-        copy: src="download.py" dest="/home/vm3/Minecraft"
-        when: minecraft.stat.exists == False 
-
-      - name: Install minecraft server
-        script: "download.py"
-        args:
-          executable: python3
-      - name: Start minecraft server
-        shell: LD_LIBRARY_PATH=. ./bedrock_server
+- hosts: Minecraft-vm
+  become: yes
+  become_user: root
+  tasks:
+    - name: Checking if I can connect to the server.
+      ping:
+    - name: Checking if Python3 is installed
+      raw: test -e /usr/bin/python3
+      changed_when: false
+      failed_when: false
+      register: check_python
+    - name: Install Python
+      raw: yum -y install python3
+      when: check_python.rc != 0
+      # TODO: Add check for requests
+    #- name: Installing requests (pip library)
+    #  shell: pip install requests
+    - name: Check if the minecraft download script exists
+      stat:
+        path: /home/vmadmin/Minecraft/download.py
+      register: minecraft
+    - name: Create the file, if it doesnt exist already
+      file:
+        path: /home/vmadmin/Minecraft
+        state: directory
+        #shell: mkdir 
+      when: minecraft.stat.exists == False 
+    - name: Adding Minecraft download file to VM3
+      copy: src="download.py" dest="/home/vmadmin/Minecraft/"
+      when: minecraft.stat.exists == False 
+    - name: PWD
+      shell: 
+        cmd: pwd
+    - name: Install minecraft server
+      script: "/home/vmadmin/Minecraft/download.py"
+      args:
+        executable: python3
+    - name: Start minecraft server
+      shell: LD_LIBRARY_PATH=. ./bedrock_server
+ 
