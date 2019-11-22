@@ -2,7 +2,7 @@
 - hosts: MongoDB-vm
   become: yes
   become_user: root
-  default:
+  defaults:
     vars:
       host_key_checking: false
   tasks:
