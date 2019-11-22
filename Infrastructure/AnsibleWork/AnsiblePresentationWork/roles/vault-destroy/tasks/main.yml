@@ -1,0 +1,3 @@
+---
+  - name: End Vault
+    command: consul leave
