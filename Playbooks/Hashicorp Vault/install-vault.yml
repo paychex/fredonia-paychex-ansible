@@ -1,5 +1,7 @@
 ---
 - hosts: Vault-vm
+  become: yes
+  become_user: root
   tasks:
     - name: Downloading the vault (from archive).
       become: yes
