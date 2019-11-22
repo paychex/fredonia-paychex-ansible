@@ -1,5 +1,5 @@
 ---
-- hosts: vm2
+- hosts: MongoDB-vm
   become: yes
   become_user: root
 
