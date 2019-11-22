@@ -18,5 +18,7 @@
     azure_rm_virtualmachine:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-vm"
-      remove_on_absent: [network_interfaces, virtual_storage, security_groups]
+      #remove_on_absent: [network_interfaces, virtual_storage, security_groups]
       state: absent
+    with_items:
+      - "{{ instance_name }}-nic"
