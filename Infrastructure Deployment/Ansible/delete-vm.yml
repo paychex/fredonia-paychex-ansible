@@ -14,6 +14,11 @@
   vars:
     resource_group: "Paychex"
   tasks:
+  - name: Deallocating the virtual machine
+    azure_rm_virtualmachine:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-vm"
+      allocated: no
   - name: Deleting the network interface
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
