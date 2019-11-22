@@ -5,6 +5,7 @@
   - name: Installing the latest version of Apache
     yum: pkg=httpd state=latest
     become: yes
+    become_user: root
   - name: Enabling it on System boot
     become: yes
     service: 
