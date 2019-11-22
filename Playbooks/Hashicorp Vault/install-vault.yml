@@ -1,6 +1,5 @@
 ---
-- hosts: vm3
-
+- hosts: Vault-vm
   tasks:
     - name: Downloading the vault (from archive).
       become: yes
