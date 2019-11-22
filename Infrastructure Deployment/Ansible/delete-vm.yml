@@ -36,7 +36,7 @@
       name: "{{ instance_name }}-security-group"
       state: absent
   - name: Deleting the virtual network
-    azure_rm_securitygroup:
+    azure_rm_virtualnetwork:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-vnet"
       state: absent
