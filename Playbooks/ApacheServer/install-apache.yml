@@ -6,13 +6,14 @@
     yum: pkg=httpd state=latest
     become: yes
     become_user: root
+    notify:
+    - start apache
   - name: Enabling it on System boot
     become: yes
+    become_user: root
     service: 
       name: httpd 
       enabled: yes
-    notify:
-    - start apache
 
   handlers:
     - name: start apache
