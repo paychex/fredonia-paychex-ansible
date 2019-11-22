@@ -2,6 +2,7 @@
 - name: Install Apache
   hosts: Apache-vm
   become: yes
+  become_user: root
   tasks:
   - name: Installing the latest version of Apache
     yum: pkg=httpd state=latest
