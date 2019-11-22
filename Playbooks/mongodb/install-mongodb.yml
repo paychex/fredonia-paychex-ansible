@@ -8,13 +8,8 @@
   tasks:
     - name: Checking if I can connect to the server.
       ping:
-    - name: Adding MongoDB repository for CentOS
-      yum_repository:
-        name: MongoDB Repository
-        description: A repository to install MongoDB
-        baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
-        gpgcheck: yes
-        enabled: yes
+    - name: Copying MongoDB repository to the server
+      copy: src=mongodb-org-4.0.repo dest=/etc/yum.repos.d/mongodb-org-4.6.repo
     - name: Installing MongoDB
       yum: 
         name: mongodb-org
