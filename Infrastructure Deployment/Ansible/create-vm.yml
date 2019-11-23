@@ -60,6 +60,19 @@
           access: Allow
           priority: 1001
           direction: Inbound
+  #If the server is a minecraft server open port - GC
+  - name: Open port for minecraft
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 19132
+          access: Allow
+          priority: 1002
+          direction: Inbound
+      when: "{{ instance_name }}" == "Minecraft"
   - name: Create virtual network interface card
     azure_rm_networkinterface:
       resource_group: "{{ resource_group }}"
