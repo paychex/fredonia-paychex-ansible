@@ -35,7 +35,6 @@
       rules:
         - name: Port_80
           protocol: Tcp
-          source_address_prefix: *
           destination_port_range: 80
           access: Allow
           priority: 1001
