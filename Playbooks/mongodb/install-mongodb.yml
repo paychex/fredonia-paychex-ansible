@@ -19,8 +19,8 @@
         name:
           - gcc
           - epel-release
-    #- name: Update packages
-      #yum: name=* state=latest
+    - name: Update packages
+      yum: name=* state=latest
     - name: Installing the latest pymongo
       pip: name=pymongo state=latest use_mirrors=no
     - name: MONGOD | Create admin user
