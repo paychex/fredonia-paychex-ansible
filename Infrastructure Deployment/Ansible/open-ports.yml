@@ -42,6 +42,18 @@
           priority: 1010
     tags:
     - Port_80
+  - name: Create Network Security Group that allows SSH
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: 'MongoDB_Port'
+          protocol: Tcp
+          destination_port_range: 27017
+          access: Allow
+          priority: 1100
+    tags:
+    - MongoDB_Port
   #If the server is a minecraft server open port - GC
   - name: Open port for minecraft
     azure_rm_securitygroup:
