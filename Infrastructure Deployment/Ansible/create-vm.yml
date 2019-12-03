@@ -43,6 +43,7 @@
       resource_group: "{{ resource_group }}"
       allocation_method: Static
       name: "{{ instance_name }}-public-ip"
+      domain_name: {{ domain_name }}
     register: output_ip_address
   - name: Dump public IP for VM which will be created
     debug:
