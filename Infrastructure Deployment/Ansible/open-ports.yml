@@ -47,7 +47,7 @@
           access: Allow
           priority: 102
     tags:
-    - port80
+    - Port_80
   #If the server is a minecraft server open port - GC
   - name: Open port for minecraft
     azure_rm_securitygroup:
@@ -60,4 +60,5 @@
           access: Allow
           priority: 1002
           direction: Inbound
-      when: "{{ instance_name }}" == "Minecraft"
+    tags:
+    - Minecraft_Port
