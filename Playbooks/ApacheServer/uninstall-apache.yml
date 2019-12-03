@@ -1,0 +1,14 @@
+---
+- name: Uninstall Apache
+  hosts: Apache-vm
+  tasks:
+  - name: stop apache
+      become: yes
+      become_user: root
+      service: 
+        name: "httpd"
+        state: stopped
+  - name: Unstalling Apache
+    yum: pkg=httpd state=absent
+    become: yes
+    become_user: root
