@@ -21,8 +21,8 @@
           - epel-release
     - name: Update packages
       yum: name=* state=latest
-    - name: Installing PyMongo
-      raw: sudo easy_install pip
+    - name: Installing the latest pymongo
+      pip: name=pymongo state=latest use_mirrors=no
     - name: MONGOD | Create admin user
       mongodb_user:
         database: admin
