@@ -19,6 +19,9 @@
     - name: start apache
       become: yes
       become_user: root
+      copy:
+        src: temp-homepage.yml
+        dest: /var/www/html
       service: 
         name: "httpd"
         state: started
