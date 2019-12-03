@@ -13,6 +13,12 @@
         state: latest
       notify:
         - start MongoDB
+    - name: MONGOD | Create admin user
+      mongodb_user:
+        database: admin
+        name: "{{ mongo_db_user }}"
+        password: "{{ mongo_db_pass }}"
+        roles: "root"
 
   handlers:
     - name: start MongoDB
