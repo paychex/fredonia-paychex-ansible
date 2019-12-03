@@ -19,6 +19,8 @@
         name:
           - gcc
           - python-devel
+          - build-essential
+          - python-dev
     - name: Installing PyMongo
       raw: sudo easy_install pip
     - name: MONGOD | Create admin user
