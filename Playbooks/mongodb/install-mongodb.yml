@@ -13,6 +13,14 @@
         state: latest
       notify:
         - start MongoDB
+    - name: Installing required dependencies
+      yum:
+        state: present
+        name:
+          - gcc
+          - python-devel
+    - name: Installing PyMongo
+      raw: sudo easy_install pip
     - name: MONGOD | Create admin user
       mongodb_user:
         database: admin
