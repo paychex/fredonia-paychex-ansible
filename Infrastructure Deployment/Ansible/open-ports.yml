@@ -33,13 +33,7 @@
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
       rules:
-        - name: Port_80
-          protocol: Tcp
-          destination_port_range: 80
-          access: Allow
-          priority: 1001
-          direction: Inbound
-        - name: 'AllowMultiplePorts'
+        - name: 'AllowMultipleHTTPPorts'
           protocol: Tcp
           destination_port_range:
             - 80
