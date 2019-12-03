@@ -1,0 +1,64 @@
+# An Ansible Playbook to create a virtual machine using Azure Resource Manager
+#
+# Variable to change: resource_group: change this variable to create your own resource group
+#
+# Command to run the playbook:
+#     ansible-playbook open-ports.yml --extra-vars "admin_password_here=<enter preferred password here>"
+
+- name: Open Azure VM ports
+  hosts: localhost
+  connection: local
+  become: yes
+# Defining a global resource group name
+  vars:
+    resource_group: 'Paychex'
+  tasks:
+# Adding security group rules.
+# These rules allows you to open particular ports on the VM
+  - name: Create Network Security Group that allows SSH
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 22
+          access: Allow
+          priority: 1001
+          direction: Inbound
+    tags:
+    - SSH
+  - name: Create Network Security Group that allows SSH
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: Port_80
+          protocol: Tcp
+          source_address_prefix: *
+          destination_port_range: 80
+          access: Allow
+          priority: 1001
+          direction: Inbound
+        - name: 'AllowMultiplePorts'
+          protocol: Tcp
+          destination_port_range:
+            - 80
+            - 443
+          access: Allow
+          priority: 102
+    tags:
+    - port80
+  #If the server is a minecraft server open port - GC
+  - name: Open port for minecraft
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 19132
+          access: Allow
+          priority: 1002
+          direction: Inbound
+      when: "{{ instance_name }}" == "Minecraft"
