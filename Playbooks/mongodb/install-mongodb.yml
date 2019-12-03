@@ -18,8 +18,6 @@
         state: present
         name:
           - gcc
-          - python-devel
-          - python-dev
           - epel-release
     - name: Update packages
       yum: name=* state=latest
