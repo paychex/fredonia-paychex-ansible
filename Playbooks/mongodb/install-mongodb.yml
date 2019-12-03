@@ -22,9 +22,7 @@
           - python-dev
           - epel-release
     - name: Update packages
-      yum:
-        state: latest
-        name: *
+      yum: name=* state=latest
     - name: Installing PyMongo
       raw: sudo easy_install pip
     - name: MONGOD | Create admin user
