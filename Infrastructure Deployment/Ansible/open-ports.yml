@@ -45,7 +45,7 @@
             - 80
             - 443
           access: Allow
-          priority: 102
+          priority: 1010
     tags:
     - Port_80
   #If the server is a minecraft server open port - GC
