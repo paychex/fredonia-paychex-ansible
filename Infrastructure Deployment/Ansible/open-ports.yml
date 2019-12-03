@@ -16,7 +16,6 @@
 # Adding security group rules.
 # These rules allows you to open particular ports on the VM
   - name: Create Network Security Group that allows SSH
-    become: yes
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
@@ -30,7 +29,6 @@
     tags:
     - SSH
   - name: Create Network Security Group that allows SSH
-    become: yes
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
@@ -52,7 +50,6 @@
     - Port_80
   #If the server is a minecraft server open port - GC
   - name: Open port for minecraft
-    become: yes
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
