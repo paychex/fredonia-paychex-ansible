@@ -66,7 +66,7 @@
           priority: 1002
           direction: Inbound
     tags:
-    - Minecraft_Port
+    - Vault_Port
   #If the server is a minecraft server open port - GC
   - name: Open port for minecraft
     azure_rm_securitygroup:
