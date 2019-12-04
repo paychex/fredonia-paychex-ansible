@@ -54,13 +54,26 @@
           priority: 1100
     tags:
     - MongoDB_Port
+  - name: Open port for Vault
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: MinecraftPort
+          protocol: Tcp
+          destination_port_range: 8200
+          access: Allow
+          priority: 1002
+          direction: Inbound
+    tags:
+    - Minecraft_Port
   #If the server is a minecraft server open port - GC
   - name: Open port for minecraft
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
       rules:
-        - name: SSH
+        - name: MinecraftPort
           protocol: Tcp
           destination_port_range: 19132
           access: Allow
