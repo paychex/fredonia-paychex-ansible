@@ -5,37 +5,82 @@
   tasks:
     - name: Checking if I can connect to the server.
       ping:
+      
+      #Check if python3 is installed
     - name: Checking if Python3 is installed
       raw: test -e /usr/bin/python3
       changed_when: false
       failed_when: false
       register: check_python
+      
+      #Install pythong if check fails
     - name: Install Python
       raw: yum -y install python3
       when: check_python.rc != 0
-      # TODO: Add check for requests
-    #- name: Installing requests (pip library)
-    #  shell: pip install requests
-    - name: Check if the minecraft download script exists
-      stat:
-        path: /home/vmadmin/Minecraft/download.py
-      register: minecraft
-    - name: Create the file, if it doesnt exist already
+      
+    #Install unzip on server - I couldn't unarchive to work
+    - name: Installing unzip
+      raw: sudo apt install unzip
+      
+      #Create a minecraft directory
+    - name: Create a Directory /home/vmadmin/Minecraft
+      become: yes
       file:
         path: /home/vmadmin/Minecraft
         state: directory
-        #shell: mkdir 
-      when: minecraft.stat.exists == False 
-    - name: Adding Minecraft download file to VM3
-      copy: src="download.py" dest="/home/vmadmin/Minecraft/"
-      when: minecraft.stat.exists == False 
-    - name: PWD
-      shell: 
-        cmd: pwd
-    - name: Install minecraft server
-      script: "/home/vmadmin/Minecraft/download.py"
-      args:
-        executable: python3
+        mode: 0771
+        owner: 1000
+        group: 1000
+        
+    #Check for bedrock-server-1.13.2.0.zip
+    - name: Checking for bedrock-server-1.13.2.0.zip
+      stat:
+        path: /home/vmadmin/Minecraft/bedrock-server-1.13.2.0.zip
+      register: Minecraft_server_zip
+        
+        
+    #Download a the server files
+    - name: Downloading Minecraft zip files
+      become: yes
+      get_url:
+        url: https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.3.0.zip
+        dest: /home/vmadmin/Minecraft
+        mode: 0771
+        owner: 1000
+        group: 1000
+      when: Minecraft_server_zip.stat.exists == False 
+    
+    
+     #Check for server files
+    - name: Checking for bedrock_server exec 
+      stat:
+        path: /home/vmadmin/Minecraft/bedrock_server
+      register: Minecraft_bedrock_server_exec
+    
+    
+    #Unzip the minecraft server files if not already installed
+    - name: Unzipping minecraft files
+      raw: unzip /home/vmadmin/Minecraft/bedrock-server-1.13.3.0.zip -d ./Minecraft
+      when: Minecraft_bedrock_server_exec.stat.exists == False 
+
+
+    #Check for minecraft start script
+    - name: Check for start script
+      stat:
+        path: /home/vmadmin/Minecraft/start.sh
+      register: Minecraft_start_script
+
+
+    #Copy the start script over to the server
+    - name: Copying start server script
+      copy: src="start.sh" dest="/home/vmadmin/Minecraft/"
+      when: Minecraft_start_script.stat.exists == False 
+
+
+    #Start the minecraft server   
     - name: Start minecraft server
-      shell: LD_LIBRARY_PATH=. ./bedrock_server
- 
+      #raw: cd /home/vmadmin/Minecraft; LD_LIBRARY_PATH=. ./bedrock_server & disown
+      shell: "(cd /home/vmadmin/Minecraft; nohup ./start.sh </dev/null >/dev/null 2>&1 &)"
+      async: 10
+      poll: 0
+   
