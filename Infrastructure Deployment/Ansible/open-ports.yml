@@ -74,7 +74,7 @@
       name: "{{ instance_name }}-security-group"
       rules:
         - name: MinecraftPort
-          protocol: Tcp
+          protocol: Any
           destination_port_range: 19132
           access: Allow
           priority: 1005
