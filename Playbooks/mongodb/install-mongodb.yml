@@ -19,7 +19,8 @@
         name:
           - gcc
           - epel-release
-          - python-pip
+    - name: Installing pip
+      shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py
       notify:
         - start MongoDB
     - name: Installing the latest pymongo
