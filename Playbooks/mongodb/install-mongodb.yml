@@ -25,12 +25,6 @@
       shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py
     - name: Installing the latest pymongo
       pip: name=pymongo state=latest use_mirrors=no
-    - name: MONGOD | Create admin user
-      mongodb_user:
-        database: admin
-        name: "{{ mongo_db_user }}"
-        password: "{{ mongo_db_pass }}"
-        roles: "root"
 
   handlers:
     - name: start MongoDB
