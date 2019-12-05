@@ -59,7 +59,7 @@
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-security-group"
       rules:
-        - name: MinecraftPort
+        - name: Vault_Port
           protocol: Tcp
           destination_port_range: 8200
           access: Allow
