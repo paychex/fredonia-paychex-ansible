@@ -8,6 +8,8 @@
     become_user: root
   - name: Copy splash page
     copy: src=temp-homepage.html dest=/var/www/html
+    become: yes
+    become_user: root
     notify:
     - start apache
   - name: Enabling it on System boot
