@@ -94,22 +94,22 @@
         version: latest
     notify:
       - start myVirtualMachinePlz
-    - name: create Azure vm extension to enable HTTPS WinRM listener
-      azure_rm_virtualmachine_extension:
-        name: winrm-extension
-        resource_group: "{{ resource_group }}"
-        virtual_machine_name: "{{ instance_name }}-vm"
-        publisher: Microsoft.Compute
-        virtual_machine_extension_type: CustomScriptExtension
-        type_handler_version: 1.9
-        settings: '{"commandToExecute": "powershell.exe -ExecutionPolicy ByPass -EncodedCommand {{winrm_enable_script}}"}'
-        auto_upgrade_minor_version: true
+  - name: create Azure vm extension to enable HTTPS WinRM listener
+    azure_rm_virtualmachine_extension:
+      name: winrm-extension
+      resource_group: "{{ resource_group }}"
+      virtual_machine_name: "{{ instance_name }}-vm"
+      publisher: Microsoft.Compute
+      virtual_machine_extension_type: CustomScriptExtension
+      type_handler_version: 1.9
+      settings: '{"commandToExecute": "powershell.exe -ExecutionPolicy ByPass -EncodedCommand {{winrm_enable_script}}"}'
+      auto_upgrade_minor_version: true
 
-    - name: wait for the WinRM port to come online
-      wait_for:
-        port: 5986
-        host: '{{azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress}}'
-        timeout: 600
+  - name: wait for the WinRM port to come online
+    wait_for:
+      port: 5986
+      host: '{{azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress}}'
+      timeout: 600
   
   handlers:
     - name: start myVirtualMachinePlz
