@@ -11,6 +11,8 @@
       yum: 
         name: mongodb-org
         state: latest
+      notify:
+        - start MongoDB
     - name: Updating packages
       yum: name=* state=latest
     - name: Installing required dependencies
@@ -21,8 +23,6 @@
           - epel-release
     - name: Installing pip
       shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py
-      notify:
-        - start MongoDB
     - name: Installing the latest pymongo
       pip: name=pymongo state=latest use_mirrors=no
     - name: MONGOD | Create admin user
