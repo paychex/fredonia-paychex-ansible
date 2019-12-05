@@ -1,0 +1,103 @@
+# An Ansible Playbook to create a virtual machine using Azure Resource Manager
+# Extra variables required when running the playbook:
+#   - instance_name: a variable to get the name of virtual machine & it's corresponding resources
+#   - admin_password_here: a variable to pass the password for virtual machine (VM)
+#   - vm_image_offer: a variable to select the OS provider for VM. Example: Ubuntu, RHEL, CentOS
+#   - vm_image_publisher: a variable to select the image publisher
+#   - vm_sku_version: a variable to get the SKU version (corresponds to the image offer & publisher.)
+#
+# Variable to change: resource_group: change this variable to create your own resource group
+#
+# Command to run the playbook:
+#     ansible-playbook create-vm.yml --extra-vars "admin_password_here=<enter preferred password here>"
+
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  become: yes
+# Defining a global resource group name
+  vars:
+    resource_group: 'Paychex'
+  tasks:
+# Creating the resource group
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: eastus
+# Virtual network is a vnet instance that provides network access to your virtual machine.
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-vnet"
+      address_prefixes: "10.0.0.0/16"
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-subnet"
+      address_prefix: "10.0.1.0/24"
+      virtual_network: "{{ instance_name }}-vnet"
+# A public address allows you to locate and communicate with your VM.
+# A static public address allows you to monitor the VM all the time!
+  - name: Create public IP address
+    azure_rm_publicipaddress:
+      resource_group: "{{ resource_group }}"
+      allocation_method: Static
+      name: "{{ instance_name }}-public-ip"
+      domain_name: "{{ domain_name | default('fredchex-randdns') }}"
+    register: output_ip_address
+  - name: Dump public IP for VM which will be created
+    debug:
+      msg: "The public IP is {{ output_ip_address.state.ip_address }}."
+# Adding security group rules.
+# These rules allows you to open particular ports on the VM
+  - name: Create Network Security Group that allows SSH
+    azure_rm_securitygroup:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-security-group"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 22
+          access: Allow
+          priority: 1001
+          direction: Inbound
+  - name: Create virtual network interface card
+    azure_rm_networkinterface:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-nic"
+      virtual_network: "{{ instance_name }}-vnet"
+      subnet: "{{ instance_name }}-subnet"
+      public_ip_name: "{{ instance_name }}-public-ip"
+      security_group: "{{ instance_name }}-security-group"
+# Creating VM here:
+# By default, this playbook creats a CentOS virtual machine. For other OS, replace the image values below.
+  - name: Create VM
+    azure_rm_virtualmachine:
+      resource_group: "{{ resource_group }}"
+      name: "{{ instance_name }}-vm"
+      vm_size: Standard_B1ms
+      admin_username: vmadmin
+      os_type: Windows
+      ssh_password_enabled: true
+      admin_password: "{{ admin_password_here }}" # Alternative: Set SSH key
+      #ssh_public_keys:
+       # - path: /home/azureuser/.ssh/authorized_keys
+        #  key_data: <your-key-data>
+      network_interfaces: "{{ instance_name }}-nic"
+# To get CentOS VM, simply uncomment the values and get rid of all the variables.
+# More image offering can be found at: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage
+      image:
+        offer: "{{ vm_image_offer}}" #CentOS
+        publisher: "{{ vm_image_publisher }}" #OpenLogic
+        sku: "{{ vm_sku_version }}" # "7.5"
+        version: latest
+    notify:
+      - start myVirtualMachinePlz
+  
+  handlers:
+    - name: start myVirtualMachinePlz
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ instance_name }}-vm"
+        started: yes
+      
