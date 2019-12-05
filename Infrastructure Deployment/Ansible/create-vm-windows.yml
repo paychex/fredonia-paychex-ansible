@@ -76,7 +76,7 @@
     azure_rm_virtualmachine:
       resource_group: "{{ resource_group }}"
       name: "{{ instance_name }}-vm"
-      vm_size: Standard_B1ms
+      vm_size: Standard_B2s
       admin_username: vmadmin
       os_type: Windows
       ssh_password_enabled: true
