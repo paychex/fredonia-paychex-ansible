@@ -1,38 +1,70 @@
 ---
 - hosts: Vault-vm
-  become: yes
-  become_user: root
+  gather_facts: false
+  vars:
+    vault_version: 1.3.0
+    consul_version: 1.6.2
+    ansible_winrm_server_cert_validation: ignore
+    winrm_enable_script: SQBuAHYAbwBrAGUALQBFAHgAcAByAGUAcwBzAGkAbwBuACAALQBDAG8AbQBtAGEAbgBkACAAKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcABzADoALwAvAHIAYQB3AC4AZwBpAHQAaAB1AGIAdQBzAGUAcgBjAG8AbgB0AGUAbgB0AC4AYwBvAG0ALwBhAG4AcwBpAGIAbABlAC8AYQBuAHMAaQBiAGwAZQAvAGQAZQB2AGUAbAAvAGUAeABhAG0AcABsAGUAcwAvAHMAYwByAGkAcAB0AHMALwBDAG8AbgBmAGkAZwB1AHIAZQBSAGUAbQBvAHQAaQBuAGcARgBvAHIAQQBuAHMAaQBiAGwAZQAuAHAAcwAxACcAKQApADsAIABFAG4AYQBiAGwAZQAtAFcAUwBNAGEAbgBDAHIAZQBkAFMAUwBQACAALQBSAG8AbABlACAAUwBlAHIAdgBlAHIAIAAtAEYAbwByAGMAZQA=
   tasks:
-    - name: Downloading the vault (from archive).
-      become: yes
-      unarchive:
-        # TODO: Make the following link a variable dependent for the Vault version
-        src: https://releases.hashicorp.com/vault/1.3.0/vault_1.3.0_linux_amd64.zip
-        dest: /usr/bin
-        remote_src: True
-    
-    - name: Creating vault config directory.
-      file: state=directory path=/etc/opt/vault
-      become: yes
-    - name: Copying vault config file to the server.
-      copy: src=vault_config.hcl dest=/etc/opt/vault
-      become: yes
-    - name: Copying the vault service file (systemd) to the server
-      copy: src=vault.service dest=/usr/lib/systemd/system/vault.service
-    # Starting Vault service (systemd)
-    - name: Starting Vault service
-      become: yes
-      systemd:
-        state: started
-        name: vault
-        daemon_reload: yes
-    
-    - name: Initializing Vault
-      command: vault operator init
-      register: keys
-      environment:
-        VAULT_ADDR: "http://localhost:8200"
+    - name: Ping
+      win_ping:
+    - name: Download Consul
+      win_get_url:
+        url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_windows_amd64.zip"
+        dest: D:\
+    - name: Unzipping Consul
+      win_unzip:
+        src: D:\consul_{{ consul_version }}_windows_amd64.zip
+        dest: C:\hashicorp\consul
+    - name: Download Vault
+      win_get_url:
+        url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_windows_amd64.zip"
+        dest: D:\
+    - name: Unzipping Vault
+      win_unzip:
+        src: D:\vault_{{ vault_version }}_windows_amd64.zip
+        dest: C:\hashicorp\vault
+    - name: Copying configuration files
+      win_copy:
+        src: vault-config.hcl
+        dest: C:\hashicorp\vault\vault-config.hcl
+    - name: Ensure that consul & vault is in the Windows path
+      win_path:
+        elements:
+          - C:\hashicorp\consul
+          - C:\hashicorp\vault
+        state: present
+    - name: Download PsExec
+      win_get_url:
+        url: "https://download.sysinternals.com/files/PSTools.zip"
+        dest: D:\
+    - name: Unzipping PsExec
+      win_unzip:
+        src: D:\PSTools.zip
+        dest: C:\hashicorp\PsExecTools
+        force: no
+    - name: Starting a Windows service for Consul
+      win_command: C:\hashicorp\PsExecTools\PsExec.exe -accepteula -nobanner -i 1 -s C:\hashicorp\consul\consul.exe agent -dev
+      async: 2
+      poll: 0
+      ignore_errors: yes
+    - name: Starting a Windows service for Consul
+      win_command: C:\hashicorp\PsExecTools\PsExec.exe -accepteula -nobanner -i 1 -s C:\hashicorp\vault\vault.exe server -config C:\hashicorp\vault\vault-config.hcl
+      async: 2
+      poll: 0
+      ignore_errors: yes
+
+
+        
+
+
+
       
       
+   
+
+
     
-    #- name: Create vault config dir
+
+
