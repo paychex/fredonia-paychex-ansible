@@ -77,7 +77,7 @@
           protocol: Tcp
           destination_port_range: 19132
           access: Allow
-          priority: 1002
+          priority: 1005
           direction: Inbound
     tags:
     - Minecraft_Port
